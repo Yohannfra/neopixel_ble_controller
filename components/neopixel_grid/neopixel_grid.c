@@ -63,6 +63,23 @@ esp_err_t np_grid_set_pixel(neopixel_grid_t *np, uint8_t x, uint8_t y, uint8_t r
     return ret;
 }
 
+esp_err_t np_grid_set_grid(neopixel_grid_t *np, uint8_t red, uint8_t green, uint8_t blue)
+{
+    esp_err_t ret = 0;
+
+    // apply brightness
+    red /= (21 - np->brightness);
+    green /= (21 - np->brightness);
+    blue /= (21 - np->brightness);
+
+    for (int i = 0; i < np->grid_size * np->grid_size; i++) {
+        ret |= np->stp->set_pixel(np->stp, i, red, green, blue);
+    }
+    ret |= np->stp->refresh(np->stp, 100);
+
+    return ret;
+}
+
 void np_grid_demo(neopixel_grid_t *np)
 {
     int x = 0;

@@ -18,6 +18,8 @@ esp_err_t np_grid_clear(neopixel_grid_t *np);
 esp_err_t np_grid_set_brightness(neopixel_grid_t *np, uint8_t new_brightness);
 
 esp_err_t np_grid_set_pixel(neopixel_grid_t *np, uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
+esp_err_t np_grid_set_grid(neopixel_grid_t *np, uint8_t red, uint8_t green, uint8_t blue);
+
 
 void np_grid_demo(neopixel_grid_t *np);
 
