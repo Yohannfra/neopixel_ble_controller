@@ -21,8 +21,18 @@ esp_err_t np_grid_init(neopixel_grid_t *np)
     }
 
     np_grid_clear(np);
+    np_grid_set_brightness(np, 1); // minimum brightness by default
 
     return ESP_OK;
+}
+
+esp_err_t np_grid_set_brightness(neopixel_grid_t *np, uint8_t new_brightness)
+{
+    if (new_brightness >= 1 && new_brightness <= 20) {
+        np->brightness = new_brightness;
+        return ESP_OK;
+    }
+    return ESP_ERR_INVALID_ARG;
 }
 
 esp_err_t np_grid_clear(neopixel_grid_t *np)
@@ -41,6 +51,11 @@ esp_err_t np_grid_set_pixel(neopixel_grid_t *np, uint8_t x, uint8_t y, uint8_t r
         idx += (np->grid_size - 1) - x;
     }
 
+    // apply brightness
+    red /= (21 - np->brightness);
+    green /= (21 - np->brightness);
+    blue /= (21 - np->brightness);
+
     ESP_LOGI(TAG, "Setting led index: x:%d y:%d %d", x, y, idx);
     ret |= np->stp->set_pixel(np->stp, idx, red, green, blue);
     ret |= np->stp->refresh(np->stp, 100);
@@ -55,7 +70,7 @@ void np_grid_demo(neopixel_grid_t *np)
 
     while (1) {
         np_grid_clear(np);
-        np_grid_set_pixel(np, x, y, 127, 0, 0);
+        np_grid_set_pixel(np, x, y, 255, 0, 0);
         x++;
         if (x == 5) {
             y++;
