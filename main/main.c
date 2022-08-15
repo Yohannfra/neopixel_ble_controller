@@ -7,9 +7,10 @@
 
 static const char *TAG = "MAIN";
 
-static neopixel_grid_t np1 = {
-    .grid_size = 5,
+neopixel_grid_t np_grid = {
     .pin = GPIO_NUM_32,
+    .stp = NULL,
+    .brightness = 1,
 };
 
 void app_main()
@@ -21,13 +22,16 @@ void app_main()
     }
     ESP_ERROR_CHECK(ret);
 
-    np_grid_init(&np1);
+    np_grid_init(&np_grid);
+
+    // blink grid
+    np_grid_set_grid_single_color(&np_grid, (rgb_color_t){0, 0xff, 0});
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    np_grid_clear(&np_grid);
 
     ESP_LOGI(TAG, "Starting neopixel ble controller");
 
     my_ble_init();
-
-    np_grid_demo(&np1);
 
     while (1) {
         vTaskDelay(500 / portTICK_PERIOD_MS);

@@ -3,6 +3,8 @@ idf_component_register(
         "main.c"
         "ble/my_ble.c"
         "ble/services/neopixe_grid/neopixel_grid_service.c"
+        "ble/utils.c"
+        "ble/gatt_svr.c"
 
     INCLUDE_DIRS
         "."
