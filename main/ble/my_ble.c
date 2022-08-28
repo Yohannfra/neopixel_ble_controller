@@ -125,7 +125,7 @@ static void blehr_on_sync(void)
     assert(rc == 0);
 
     uint8_t addr_val[6] = {0};
-    rc = ble_hs_id_copy_addr(blehr_addr_type, addr_val, NULL);
+    ble_hs_id_copy_addr(blehr_addr_type, addr_val, NULL);
 
     MODLOG_DFLT(INFO, "Device Address: ");
     print_addr(addr_val);
