@@ -1,7 +1,7 @@
 #ifndef NEOPIXEL_GRID_SERVICE_COMMANDS_H
 #define NEOPIXEL_GRID_SERVICE_COMMANDS_H
 
-#include "rgb_color.h"
+#include "neopixel_grid.h"
 
 #include <stdint.h>
 
@@ -28,9 +28,10 @@ typedef struct __attribute__((__packed__)) {
 _Static_assert(sizeof(grid_cmd_set_all_single_color_payload_t) == 3, "Invalid struct size");
 
 typedef struct __attribute__((__packed__)) {
-    rgb_color_t colors[25];
+    rgb_color_t colors[NP_GRID_SIZE][NP_GRID_SIZE];
 } grid_cmd_set_all_pixels_payload_t;
-_Static_assert(sizeof(grid_cmd_set_all_pixels_payload_t) == 25 * sizeof(rgb_color_t), "Invalid struct size");
+_Static_assert(sizeof(grid_cmd_set_all_pixels_payload_t) == (NP_GRID_SIZE * NP_GRID_SIZE) * sizeof(rgb_color_t),
+    "Invalid struct size");
 
 typedef struct __attribute__((__packed__)) {
     uint8_t brightness;

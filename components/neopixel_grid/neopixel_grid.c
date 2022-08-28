@@ -7,9 +7,6 @@
 
 static const char *TAG = "NEOPIXEL_GRID";
 
-static rgb_color_t grid[NP_GRID_SIZE * NP_GRID_SIZE];
-static bool is_on = true;
-
 esp_err_t np_grid_init(neopixel_grid_t *np)
 {
     rmt_config_t config = RMT_DEFAULT_CONFIG_TX(np->pin, RMT_CHANNEL_0);
@@ -45,7 +42,7 @@ esp_err_t np_grid_set_brightness(neopixel_grid_t *np, uint8_t new_brightness)
 esp_err_t np_grid_clear(neopixel_grid_t *np)
 {
     ESP_LOGI(TAG, "Clearing grid");
-    memset(grid, 0, sizeof(grid));
+    memset(np->grid, 0, sizeof(np->grid));
     return np->stp->clear(np->stp, 100);
 }
 
@@ -53,7 +50,7 @@ esp_err_t np_grid_set_pixel(neopixel_grid_t *np, uint8_t x, uint8_t y, rgb_color
 {
     esp_err_t ret = ESP_OK;
 
-    if (!is_on) {
+    if (!np->is_on) {
         ESP_LOGE(TAG, "Grid is not on, call np_grid_turn_on()");
         return ESP_FAIL;
     }
@@ -68,8 +65,8 @@ esp_err_t np_grid_set_pixel(neopixel_grid_t *np, uint8_t x, uint8_t y, rgb_color
     ESP_LOGI(TAG, "Setting led at x:%d y:%d with color r:%d g:%d b:%d", x, y, color.r, color.g, color.b);
     ret |= np->stp->set_pixel(np->stp, idx, color.r / (21 - np->brightness), color.g / (21 - np->brightness),
         color.b / (21 - np->brightness));
-    ret |= np->stp->refresh(np->stp, 100);
-    grid[idx] = color;
+
+    np->grid[y][x] = color;
 
     return ret;
 }
@@ -78,15 +75,18 @@ esp_err_t np_grid_set_grid_single_color(neopixel_grid_t *np, rgb_color_t color)
 {
     esp_err_t ret = ESP_OK;
 
-    if (!is_on) {
+    if (!np->is_on) {
         ESP_LOGE(TAG, "Grid is not on, call np_grid_turn_on()");
         return ESP_FAIL;
     }
 
     ESP_LOGI(TAG, "Setting grid with color r:%d g:%d b:%d", color.r, color.g, color.b);
-    for (int i = 0; i < NP_GRID_SIZE * NP_GRID_SIZE; i++) {
-        grid[i] = color;
+    for (int y = 0; y < NP_GRID_SIZE; y++) {
+        for (int x = 0; x < NP_GRID_SIZE; x++) {
+            np->grid[y][x] = color;
+        }
     }
+
     np_grid_turn_on(np);
 
     return ret;
@@ -98,7 +98,7 @@ esp_err_t np_grid_turn_off(neopixel_grid_t *np)
 
     ESP_LOGI(TAG, "Turning off grid");
     ret = np->stp->clear(np->stp, 100);
-    is_on = false;
+    np->is_on = false;
 
     return ret;
 }
@@ -108,12 +108,46 @@ esp_err_t np_grid_turn_on(neopixel_grid_t *np)
     esp_err_t ret = ESP_OK;
 
     ESP_LOGI(TAG, "Turning on grid");
-    is_on = true;
-    for (int i = 0; i < NP_GRID_SIZE * NP_GRID_SIZE; i++) {
-        ret |= np->stp->set_pixel(np->stp, i, grid[i].r / (21 - np->brightness), grid[i].g / (21 - np->brightness),
-            grid[i].b / (21 - np->brightness));
+    np->is_on = true;
+
+    for (int y = 0; y < NP_GRID_SIZE; y++) {
+        for (int x = 0; x < NP_GRID_SIZE; x++) {
+            np_grid_set_pixel(np, x, y, np->grid[y][x]);
+        }
     }
-    ret |= np->stp->refresh(np->stp, 100);
+
+    np_grid_refresh(np);
 
     return ret;
+}
+
+esp_err_t np_grid_set_full_grid(neopixel_grid_t *np, rgb_color_t grid[NP_GRID_SIZE][NP_GRID_SIZE])
+{
+    esp_err_t ret = ESP_OK;
+    for (int y = 0; y < NP_GRID_SIZE; y++) {
+        for (int x = 0; x < NP_GRID_SIZE; x++) {
+            ret |= np_grid_set_pixel(np, x, y, grid[y][x]);
+        }
+    }
+    np_grid_refresh(np);
+    return ret;
+}
+
+esp_err_t np_grid_refresh(neopixel_grid_t *np)
+{
+    return np->stp->refresh(np->stp, 100);
+}
+
+void np_grid_print_pixels(rgb_color_t pixels[NP_GRID_SIZE][NP_GRID_SIZE])
+{
+    ESP_LOGI(TAG, "-------------------------------------------------------------");
+
+    ESP_LOG_BUFFER_HEXDUMP(TAG, pixels, sizeof(rgb_color_t[NP_GRID_SIZE * NP_GRID_SIZE]), ESP_LOG_INFO);
+
+    for (int y = 0; y < NP_GRID_SIZE; y++) {
+        for (int x = 0; x < NP_GRID_SIZE; x++) {
+            ESP_LOGI(TAG, "x:%d y:%d = r:%d g:%d b:%d", x, y, pixels[y][x].r, pixels[y][x].g, pixels[y][x].b);
+        }
+    }
+    ESP_LOGI(TAG, "-------------------------------------------------------------");
 }

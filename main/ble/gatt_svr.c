@@ -29,7 +29,7 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                     /* Characteristic: Grid get all */
                     .uuid = BLE_UUID16_DECLARE(GATT_GRID_SERVICE_GET_ALL_UUID),
                     .access_cb = gatt_svr_chr_access_grid_get_all,
-                    .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+                    .flags = BLE_GATT_CHR_F_READ,
                 },
                 {
                     0, /* No more characteristics in this service */
