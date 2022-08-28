@@ -1,6 +1,6 @@
 # neopixel_ble_controller
 
-This firmware controlls an ESP32 with a 5x5 Neopixel (ws2812b) grid.
+This firmware controlls an ESP32 with a 5x5 Neopixel (ws2812) grid.
 
 The goal of this device is to be used as a testing BLE peripheral.
 
@@ -46,7 +46,7 @@ UUID: **0000beb6-0000-1000-8000-00805f9b34fb**
     // Will set the color of the pixel at x=2 and y=2 to color 0xff0050
     ```
 
-- **0x03**[r][g][b] => set the color of all the pixels (same color for all the pixels)
+- **0x03**[r][g][b] => set the color of all the pixels (same color for all pixels)
 
     example:
     ```c
