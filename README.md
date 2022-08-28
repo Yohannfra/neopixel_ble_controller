@@ -1,6 +1,6 @@
 # neopixel_ble_controller
 
-This firmware controlls an ESP32 with a 5x5 Neopixel (ws2812) grid.
+This firmware controls an ESP32 with a 5x5 Neopixel (ws2812) grid.
 
 The goal of this device is to be used as a testing BLE peripheral.
 
