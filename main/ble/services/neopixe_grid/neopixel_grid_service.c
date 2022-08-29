@@ -54,13 +54,13 @@ int gatt_svr_chr_access_grid_cmd_send(
         } break;
 
         case GRID_SET_ALL_SINGLE_COLOR: {
+            ESP_LOGI(TAG, "GRID_SET_ALL_SINGLE_COLOR");
             if (size != sizeof(grid_cmd_set_all_single_color_payload_t)) {
                 ESP_LOGE(TAG, "INVALID COMMAND SIZE");
                 return 0;
             }
             grid_cmd_set_all_single_color_payload_t *pl = (grid_cmd_set_all_single_color_payload_t *)payload;
             np_grid_set_grid_single_color(&np_grid, (rgb_color_t){pl->color.r, pl->color.g, pl->color.b});
-            ESP_LOGI(TAG, "GRID_SET_ALL_SINGLE_COLOR");
             grid_storage_save_pixels(np_grid.grid);
         } break;
 
