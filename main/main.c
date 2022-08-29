@@ -23,6 +23,11 @@ void app_main()
 
     ESP_LOGI(TAG, "Starting neopixel ble controller");
 
+    // blink grid
+    np_grid_set_grid_single_color(&np_grid, (rgb_color_t){0, 0xff, 0});
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    np_grid_clear(&np_grid);
+
     // restore brightness
     if (grid_storage_has_brightness()) {
         uint8_t brightness = 0;
@@ -36,11 +41,6 @@ void app_main()
         rgb_color_t saved_grid[NP_GRID_SIZE][NP_GRID_SIZE];
         ESP_ERROR_CHECK(grid_storage_load_pixels(saved_grid));
         np_grid_set_full_grid(&np_grid, saved_grid);
-    } else {
-        // blink grid
-        np_grid_set_grid_single_color(&np_grid, (rgb_color_t){0, 0xff, 0});
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        np_grid_clear(&np_grid);
     }
 
     my_ble_init();
