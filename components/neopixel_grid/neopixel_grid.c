@@ -83,11 +83,11 @@ esp_err_t np_grid_set_grid_single_color(neopixel_grid_t *np, rgb_color_t color)
     ESP_LOGI(TAG, "Setting grid with color r:%d g:%d b:%d", color.r, color.g, color.b);
     for (int y = 0; y < NP_GRID_SIZE; y++) {
         for (int x = 0; x < NP_GRID_SIZE; x++) {
-            np->grid[y][x] = color;
+            np_grid_set_pixel(np, x, y, color);
         }
     }
 
-    np_grid_turn_on(np);
+    np_grid_refresh(np);
 
     return ret;
 }
