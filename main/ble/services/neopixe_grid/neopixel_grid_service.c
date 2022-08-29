@@ -22,7 +22,8 @@ extern neopixel_grid_t np_grid;
 int gatt_svr_chr_access_grid_cmd_send(
     uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
-    ESP_LOGI(TAG, "INTO grid cmd send callback");
+    ESP_LOGI(TAG, "INTO grid cmd send callback, received a payload of %d bytes: ", ctxt->om->om_len);
+    ESP_LOG_BUFFER_HEXDUMP(TAG, ctxt->om->om_data, ctxt->om->om_len, ESP_LOG_INFO);
 
     if (ctxt->op != BLE_GATT_ACCESS_OP_WRITE_CHR || ctxt->om->om_len < 1) {
         ESP_LOGE(TAG, "INVALID OPERATION");
@@ -32,8 +33,6 @@ int gatt_svr_chr_access_grid_cmd_send(
     const uint8_t command = ctxt->om->om_data[0];
     const uint8_t *payload = ctxt->om->om_data + 1;
     const int size = ctxt->om->om_len - 1;
-
-    ESP_LOG_BUFFER_HEX("BLE_SVR", payload, size);
 
     switch (command) {
         case GRID_CLEAR:
