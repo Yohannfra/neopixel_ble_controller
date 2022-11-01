@@ -10,8 +10,6 @@
 
 static const char *TAG = "GATT_SVR";
 
-static uint16_t hrs_hrm_handle;
-
 static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
     {
         .type = BLE_GATT_SVC_TYPE_PRIMARY,
@@ -30,6 +28,13 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                     .uuid = BLE_UUID16_DECLARE(GATT_GRID_SERVICE_GET_ALL_UUID),
                     .access_cb = gatt_svr_chr_access_grid_get_all,
                     .flags = BLE_GATT_CHR_F_READ,
+                },
+                {
+                    /* Characteristic: Notifications from button */
+                    .uuid = BLE_UUID16_DECLARE(GATT_GRID_SERVICE_BUTTON_UUID),
+                    .access_cb = gatt_svr_chr_access_button,
+                    .val_handle = &button_service_handle,
+                    .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
                 },
                 {
                     0, /* No more characteristics in this service */

@@ -18,6 +18,17 @@ static uint16_t conn_handle;
 int gatt_svr_init(void);
 void print_addr(const void *addr);
 static void blehr_advertise(void);
+static bool connected = false;
+
+bool my_ble_is_connected()
+{
+    return connected;
+}
+
+uint16_t my_ble_get_conn_handle()
+{
+    return conn_handle;
+}
 
 static int blehr_gap_event(struct ble_gap_event *event, void *arg)
 {
@@ -31,11 +42,13 @@ static int blehr_gap_event(struct ble_gap_event *event, void *arg)
                 /* Connection failed; resume advertising */
                 blehr_advertise();
             }
+            connected = true;
             conn_handle = event->connect.conn_handle;
             break;
 
         case BLE_GAP_EVENT_DISCONNECT:
             MODLOG_DFLT(INFO, "disconnect; reason=%d\n", event->disconnect.reason);
+            connected = false;
 
             /* Connection terminated; resume advertising */
             blehr_advertise();

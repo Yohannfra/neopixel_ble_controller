@@ -1,11 +1,9 @@
 #include "neopixel_grid_service.h"
 
-#include "neopixel_grid_service_commands.h"
-//
-
 #include "grid_storage.h"
 #include "host/ble_uuid.h"
 #include "neopixel_grid.h"
+#include "neopixel_grid_service_commands.h"
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
 
@@ -16,6 +14,7 @@
 static const char *TAG = "NEOPIXEL_GRID_SERVICE";
 
 uint16_t grid_service_handle;
+uint16_t button_service_handle;
 
 extern neopixel_grid_t np_grid;
 
@@ -102,7 +101,34 @@ int gatt_svr_chr_access_grid_cmd_send(
 int gatt_svr_chr_access_grid_get_all(
     uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
-    ESP_LOGI(TAG, "INTO grid get all callback");
+    ESP_LOGI(TAG, "Into grid get all callback");
 
     return os_mbuf_append(ctxt->om, (uint8_t *)np_grid.grid, sizeof(np_grid.grid));
+}
+
+static uint8_t button_service_counter = 0;
+
+void notify_button_service(int16_t conn_handle)
+{
+    struct os_mbuf *om;
+
+    button_service_counter++;
+
+    if (conn_handle > -1) {
+        om = ble_hs_mbuf_from_flat(&button_service_counter, sizeof(button_service_counter));
+        ESP_LOGI(TAG, "Notifying conn=%d", conn_handle);
+        int rc = ble_gattc_notify_custom((uint16_t)conn_handle, button_service_handle, om);
+        if (rc != 0) {
+            ESP_LOGE(TAG, "error notifying; rc=%d", rc);
+            return;
+        }
+    }
+}
+
+int gatt_svr_chr_access_button(
+    uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
+{
+    ESP_LOGI(TAG, "Into button service read callback");
+
+    return os_mbuf_append(ctxt->om, &button_service_counter, sizeof(button_service_counter));
 }

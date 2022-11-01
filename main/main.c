@@ -3,12 +3,19 @@
 #include "freertos/task.h"
 #include "grid_storage.h"
 #include "my_ble.h"
+#include "my_button.h"
 #include "neopixel_grid.h"
+#include "neopixel_grid_service.h"
 #include "nvs_flash.h"
 
 static const char *TAG = "MAIN";
 
 neopixel_grid_t np_grid = NP_GRID_DEFAULT;
+
+my_button_handle_t btn = {
+    .direction = UP,
+    .pin = GPIO_NUM_17,
+};
 
 void app_main()
 {
@@ -45,7 +52,17 @@ void app_main()
 
     my_ble_init();
 
+    ESP_ERROR_CHECK(my_button_init(&btn));
+
     while (1) {
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        if (my_button_is_pressed(&btn)) {
+            ESP_LOGI(TAG, "Button pressed");
+            if (my_ble_is_connected()) {
+                ESP_LOGI(TAG, "Sending notification");
+                notify_button_service(my_ble_get_conn_handle());
+            }
+            vTaskDelay(200 / portTICK_PERIOD_MS);
+        }
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
