@@ -4,8 +4,8 @@ This firmware controls an ESP32 with a 5x5 Neopixel (ws2812) grid.
 
 The goal of this device is to be used as a testing BLE peripheral.
 
-A picture of the ESP32 and the grid in a 3D printed case:\
-![pic_of_the_grid](./.github/pixel_pic.jpg)
+A picture of the ESP32 and the full device :\
+![pic_of_device](./.github/full.JPG)
 
 
 ## Requirements
