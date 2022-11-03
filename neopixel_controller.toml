@@ -1,0 +1,61 @@
+# preset configuration file for https://github.com/Yohannfra/bluerepl
+
+[device]
+name = "BLE_NP_CONTROLLER"
+address = "17f9eb2e-0267-2430-d287-091d307b6708"
+autoconnect = false
+
+[services.neopixels]
+uuid = "8e72bbe5-f777-5284-7849-b4a0b2ac70d2"
+
+[services.neopixels.characteristics.write]
+uuid = "0000beb6-0000-1000-8000-00805f9b34fb"
+
+[services.neopixels.characteristics.read]
+uuid = "0000cad8-0000-1000-8000-00805f9b34fb"
+
+[services.neopixels.characteristics.button]
+uuid = "0000dac4-0000-1000-8000-00805f9b34fb"
+
+[commands.clear]
+command_type = "write"
+service = "neopixels"
+characteristic = "write"
+payload = "0x01"
+
+[commands.all_red]
+command_type = "write"
+service = "neopixels"
+characteristic = "write"
+payload = "0x03 0xff 0 0"
+
+[commands.all_green]
+command_type = "write"
+service = "neopixels"
+characteristic = "write"
+payload = "0x03 0 0xff 0"
+
+[commands.all_blue]
+command_type = "write"
+service = "neopixels"
+characteristic = "write"
+payload = "0x03 0 0 0xff"
+
+[commands.get_pixels]
+command_type = "read"
+service = "neopixels"
+characteristic = "read"
+
+[functions.blink_rgb]
+commands_delay_ms = [1000, 1000, 1000, 0]
+commands = ["all_red", "all_green", "all_blue", "clear"]
+
+[commands.sub_button]
+command_type = "notify"
+service = "neopixels"
+characteristic = "button"
+
+[commands.unsub_button]
+command_type = "unsubscribe"
+service = "neopixels"
+characteristic = "button"
