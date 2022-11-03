@@ -2,10 +2,10 @@
 
 This firmware controls an ESP32 with a 5x5 Neopixel (ws2812) grid.
 
-The goal of this device is to be used as a testing BLE peripheral.
+This device is made to be used as a testing BLE peripheral for the [bluerepl](https://github.com/Yohannfra/bluerepl) project.
 
 A picture of the ESP32 and the full device :\
-![pic_of_device](./.github/full.JPG)
+<img src=".github/full.JPG" width="400"/>
 
 
 ## Requirements
@@ -24,13 +24,18 @@ make flash
 
 ## Ble services and characteristics
 
-There is one service with two characteristics, one for sending commands and the other for reading the grid colors.
+There is one service with three characteristics, one for sending commands one for reading the grid colors and a third one to send notifications when the button is pressed.
 
-### Service UUID: 
+---
+
+### Service UUID:
 UUID: **8e72bbe5-f777-5284-7849-b4a0b2ac70d2**
 
+---
+
 ### Characteristic for sending commands:
-UUID: **0000beb6-0000-1000-8000-00805f9b34fb**
+UUID: **0000beb6-0000-1000-8000-00805f9b34fb**\
+Properties: **WRITE** / **WRITE WITHOUT RESPONSE**
 
 #### Commands
 
@@ -82,9 +87,11 @@ UUID: **0000beb6-0000-1000-8000-00805f9b34fb**
 
 - **0x07** => turn off the leds
 
+---
 
 ### Characteristic for reading pixels color:
-UUID: **0000cad8-0000-1000-8000-00805f9b34fb**
+UUID: **0000cad8-0000-1000-8000-00805f9b34fb**\
+Properties: **READ**
 
 The colors will be arranged like this
 
@@ -97,3 +104,11 @@ typedef struct {
 
 rgb_color_t the_array_you_receive[25];
 ```
+
+---
+
+### Characteristic for button notifications:
+UUID: **0000dac4-0000-1000-8000-00805f9b34fb**\
+Properties: **READ** / **NOTIFY**
+
+When the button is pressed it will increment a counter and notify it's value.
