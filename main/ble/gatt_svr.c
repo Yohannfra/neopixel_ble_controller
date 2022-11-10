@@ -1,5 +1,6 @@
 #include "host/ble_hs.h"
 #include "host/ble_uuid.h"
+#include "services/dis/my_dis.h"
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
 #include "services/neopixe_grid/neopixel_grid_service.h"
@@ -41,6 +42,29 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
                 },
             },
     },
+
+    {/* Service: Device Information */
+        .type = BLE_GATT_SVC_TYPE_PRIMARY,
+        .uuid = BLE_UUID16_DECLARE(GATT_DEVICE_INFO_UUID),
+        .characteristics =
+            (struct ble_gatt_chr_def[]){
+                {
+                    /* Characteristic: * Manufacturer name */
+                    .uuid = BLE_UUID16_DECLARE(GATT_MANUFACTURER_NAME_UUID),
+                    .access_cb = gatt_svr_chr_access_device_info,
+                    .flags = BLE_GATT_CHR_F_READ,
+                },
+                {
+                    /* Characteristic: Model number string */
+                    .uuid = BLE_UUID16_DECLARE(GATT_MODEL_NUMBER_UUID),
+                    .access_cb = gatt_svr_chr_access_device_info,
+                    .flags = BLE_GATT_CHR_F_READ,
+                },
+                {
+                    0, /* No more characteristics in this service */
+                },
+            }},
+
     {
         0, /* No more services */
     },
