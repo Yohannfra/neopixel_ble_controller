@@ -9,7 +9,7 @@ A picture of the ESP32 and the full device :\
 
 
 ## Requirements
-- [Install ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html)
+- [Install ESP-IDF v4.4](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html)
 
 ## Get started
 
